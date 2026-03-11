@@ -1011,12 +1011,16 @@ ul { list-style: none; }
   .mobile-topbar { display: flex; }
   :root { --topbar-h: 56px; --sidebar-w: 0px; }
   .main-content {
-    margin-left: 0; padding: 80px 20px 40px;
+    margin-left: 0; padding: 80px 32px 40px;
   }
+}
+
+@media (max-width: 767px) {
+  .main-content { padding: 80px 20px 40px; }
   .checklist-grid { grid-template-columns: 1fr; }
   .daily-grid { grid-template-columns: 1fr; }
   .countdown-hero { display: none; }
-  .now-banner { flex-direction: column; text-align: left; }
+  .now-banner { flex-direction: column; text-align: left; gap: 16px; }
   .now-banner-right { text-align: left; }
   .today-summary-bar { flex-direction: column; }
   .today-summary-item { border-right: none; border-bottom: 1px solid var(--border); text-align: left; padding: 12px 16px; }
@@ -1035,8 +1039,7 @@ ul { list-style: none; }
 /* Mobile sidebar overlay */
 .sidebar-overlay {
   position: fixed; inset: 0; z-index: 99;
-  background: rgba(15, 23, 42, 0.4);
-  backdrop-filter: blur(4px);
+  background: rgba(15, 23, 42, 0.6);
   opacity: 0; pointer-events: none;
   transition: opacity var(--transition);
 }

@@ -171,7 +171,7 @@ function setupNav(){
   });
   sidebarOverlay=document.createElement('div');
   sidebarOverlay.className='sidebar-overlay';
-  document.body.appendChild(sidebarOverlay);
+  document.querySelector('.app-wrapper').appendChild(sidebarOverlay);
   n.hamburgerBtn?.addEventListener('click',()=>{
     n.sidebar.classList.toggle('open');
     sidebarOverlay.classList.toggle('show');
