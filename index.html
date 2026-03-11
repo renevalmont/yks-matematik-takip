@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YKS Matematik Takip Merkezi</title>
+  <meta name="description" content="YKS Matematik çalışma takip paneli - 68 haftalık yol haritası, günlük plan, konu hakimiyeti ve deneme analizi." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <!-- Background Effects -->
+  <div class="bg-mesh"></div>
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+  <div class="bg-particles" id="bgParticles"></div>
+
+  <!-- Confetti container -->
+  <div id="confettiCanvas"></div>
+
+  <!-- Toast container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- App Shell -->
+  <div class="app-wrapper">
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon">📐</div>
+        <div class="brand-text">
+          <span class="brand-name">YKS Takip</span>
+          <span class="brand-sub">Matematik Merkezi</span>
+        </div>
+      </div>
+
+      <div class="sidebar-user" id="sidebarUser">
+        <div class="user-avatar" id="userAvatar">?</div>
+        <div class="user-info">
+          <span class="user-name" id="sidebarUserName">Öğrenci</span>
+          <span class="user-level" id="sidebarUserLevel">Seviye 1</span>
+        </div>
+      </div>
+
+      <div class="sidebar-xp">
+        <div class="xp-bar-wrap">
+          <div class="xp-bar-fill" id="xpBarFill" style="width:0%"></div>
+        </div>
+        <span class="xp-text" id="xpText">0 / 100 XP</span>
+      </div>
+
+      <ul class="sidebar-nav">
+        <li>
+          <button class="nav-item" data-section="dashboard" id="navDashboard">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Ana Panel</span>
+          </button>
+        </li>
+        <li>
+          <button class="nav-item active" data-section="today" id="navToday">
+            <span class="nav-icon">🎯</span>
+            <span class="nav-label">Bugün Ne Yap?</span>
+            <span class="nav-badge pulse" id="todayBadge">!</span>
+          </button>
+        </li>
+        <li>
+          <button class="nav-item" data-section="roadmap" id="navRoadmap">
+            <span class="nav-icon">🗺️</span>
+            <span class="nav-label">Yol Haritası</span>
+            <span class="nav-badge" id="roadmapBadge">68</span>
+          </button>
+        </li>
+        <li>
+          <button class="nav-item" data-section="mastery" id="navMastery">
+            <span class="nav-icon">🧠</span>
+            <span class="nav-label">Konu Hakimiyeti</span>
+          </button>
+        </li>
+        <li>
+          <button class="nav-item" data-section="mistakes" id="navMistakes">
+            <span class="nav-icon">🔬</span>
+            <span class="nav-label">Hata Laboratuvarı</span>
+          </button>
+        </li>
+        <li>
+          <button class="nav-item" data-section="records" id="navRecords">
+            <span class="nav-icon">📊</span>
+            <span class="nav-label">Kayıtlar</span>
+          </button>
+        </li>
+        <li>
+          <button class="nav-item" data-section="settings" id="navSettings">
+            <span class="nav-icon">⚙️</span>
+            <span class="nav-label">Ayarlar</span>
+          </button>
+        </li>
+      </ul>
+
+      <div class="sidebar-streak" id="sidebarStreak">
+        <div class="streak-flame">🔥</div>
+        <div class="streak-info">
+          <span class="streak-count" id="streakCount">0</span>
+          <span class="streak-label">günlük seri</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Mobile Top Bar -->
+    <header class="mobile-topbar" id="mobileTopbar">
+      <button class="hamburger" id="hamburgerBtn">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="mobile-brand">📐 YKS Takip</div>
+      <div class="mobile-streak" id="mobileStreak">🔥 <span id="mobileStreakCount">0</span></div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content" id="mainContent">
+
+      <!-- ============ SECTION: DASHBOARD ============ -->
+      <section class="content-page" id="page-dashboard">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title" id="greetingTitle">Merhaba! 👋</h1>
+            <p class="page-subtitle" id="greetingSubtitle">Bugün harika bir gün olacak.</p>
+          </div>
+          <div class="countdown-hero" id="countdownHero">
+            <div class="countdown-number" id="countdownDays">---</div>
+            <div class="countdown-label">gün kaldı</div>
+          </div>
+        </div>
+
+        <!-- Quick Stats Row -->
+        <div class="stats-row">
+          <div class="stat-card stat-gradient-1" id="statPhase">
+            <div class="stat-icon">📍</div>
+            <div class="stat-body">
+              <div class="stat-value" id="dashPhaseValue">-</div>
+              <div class="stat-label">Bulunduğun aşama</div>
+            </div>
+          </div>
+          <div class="stat-card stat-gradient-2" id="statProgress">
+            <div class="stat-icon">📈</div>
+            <div class="stat-body">
+              <div class="stat-value" id="dashProgressValue">0/68</div>
+              <div class="stat-label">Hafta tamamlandı</div>
+            </div>
+          </div>
+          <div class="stat-card stat-gradient-3" id="statMastery">
+            <div class="stat-icon">🧠</div>
+            <div class="stat-body">
+              <div class="stat-value" id="dashMasteryValue">0%</div>
+              <div class="stat-label">Hakimiyet puanı</div>
+            </div>
+          </div>
+          <div class="stat-card stat-gradient-4" id="statWeekly">
+            <div class="stat-icon">💪</div>
+            <div class="stat-body">
+              <div class="stat-value" id="dashWeeklyValue">0</div>
+              <div class="stat-label">Son 7 gün soru</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Priority Actions -->
+        <div class="card glass-card" id="priorityCard">
+          <div class="card-header">
+            <h2 class="card-title">⚡ Şimdi Ne Yapmalısın?</h2>
+            <span class="card-tag tag-urgent">Öncelikli</span>
+          </div>
+          <div class="priority-list" id="priorityBoard"></div>
+        </div>
+
+        <!-- System Rules -->
+        <div class="card glass-card">
+          <div class="card-header">
+            <h2 class="card-title">📋 Çalışma Sistemi</h2>
+          </div>
+          <div class="system-rules">
+            <div class="rule-card">
+              <div class="rule-icon">🔄</div>
+              <h4>5 + 1 + 1 Ritim</h4>
+              <p>Beş çalışma, bir deneme, bir tekrar günü.</p>
+            </div>
+            <div class="rule-card">
+              <div class="rule-icon">🎯</div>
+              <h4>%60-%65 Eşik</h4>
+              <p>Bu oranın altındaysan konuyu tekrar et.</p>
+            </div>
+            <div class="rule-card">
+              <div class="rule-icon">🔁</div>
+              <h4>Öğren → Çöz → İncele</h4>
+              <p>Haftayı sadece soru ile değil, analiz ile kapat.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SECTION: TODAY ============ -->
+      <section class="content-page active" id="page-today">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title" id="todayGreeting">🎯 Bugün Ne Yapacağım?</h1>
+            <p class="page-subtitle" id="todayMeta">Günlük çalışma akışın burada.</p>
+          </div>
+          <div class="countdown-hero" id="countdownHeroToday">
+            <div class="countdown-number" id="countdownDaysToday">---</div>
+            <div class="countdown-label">gün kaldı</div>
+          </div>
+        </div>
+
+        <!-- NOW DO THIS Banner -->
+        <div class="now-banner" id="nowBanner">
+          <div class="now-banner-left">
+            <div class="now-label">ŞU AN BUNU YAP</div>
+            <h2 class="now-title" id="nowTitle">-</h2>
+            <p class="now-desc" id="nowDesc">-</p>
+          </div>
+          <div class="now-banner-right">
+            <div class="now-time" id="nowTime">--:--</div>
+            <div class="now-mode" id="nowMode">-</div>
+          </div>
+        </div>
+
+        <!-- Today summary bar -->
+        <div class="today-summary-bar">
+          <div class="today-summary-item">
+            <span class="today-summary-label">Hafta</span>
+            <span class="today-summary-value" id="todaySummaryWeek">-</span>
+          </div>
+          <div class="today-summary-item">
+            <span class="today-summary-label">Aşama</span>
+            <span class="today-summary-value" id="todaySummaryPhase">-</span>
+          </div>
+          <div class="today-summary-item">
+            <span class="today-summary-label">Bugünkü hedef</span>
+            <span class="today-summary-value" id="todaySummaryTarget">0 soru</span>
+          </div>
+          <div class="today-summary-item">
+            <span class="today-summary-label">Hafta durumu</span>
+            <span class="today-summary-value" id="todaySummaryConf">-</span>
+          </div>
+          <div class="today-summary-item">
+            <span class="today-summary-label">Hafta ilerlemesi</span>
+            <div class="today-mini-progress">
+              <div class="today-mini-bar" id="todayMiniBar" style="width:0%"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card glass-card research-shell">
+          <div class="card-header">
+            <h2 class="card-title">🔎 Bugünün Kaynak Merkezi</h2>
+            <span class="card-subtitle">Bulunduğun seviyeye göre resmi ve ücretsiz bağlantılar</span>
+          </div>
+          <div id="todayResearchPanel" class="research-panel"></div>
+        </div>
+
+        <!-- Step-by-step timeline -->
+        <h3 class="today-section-title">Günün adımları</h3>
+        <div class="today-timeline" id="todaySteps"></div>
+
+        <!-- Quick note -->
+        <div class="today-tip" id="todayTip">
+          <strong>💡 İpucu:</strong> <span id="todayTipText">Adımları sırayla takip et. Her adımı bitirince tiklemeyi unutma!</span>
+        </div>
+      </section>
+
+      <!-- ============ SECTION: ROADMAP ============ -->
+      <section class="content-page" id="page-roadmap">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">🗺️ 68 Haftalık Yol Haritası</h1>
+            <p class="page-subtitle">Haftanı seç, planını düzenle, ilerlemeni takip et.</p>
+          </div>
+          <button class="btn btn-glow" id="jumpCurrentWeek">
+            <span>📍</span> Bulunduğum Hafta
+          </button>
+        </div>
+
+        <!-- Phase Filter Rail -->
+        <div class="phase-rail" id="phaseRail"></div>
+
+        <div class="roadmap-layout">
+          <!-- Week List -->
+          <aside class="week-sidebar">
+            <div class="week-sidebar-header">
+              <h3>Hafta Listesi</h3>
+              <p>Bir haftaya tıklayarak detayını gör.</p>
+            </div>
+            <div class="week-list" id="weekList"></div>
+          </aside>
+
+          <!-- Week Detail -->
+          <div class="week-detail-panel" id="weekDetailPanel">
+            <div class="card glass-card">
+              <div class="week-detail-header">
+                <div>
+                  <p class="week-phase-badge" id="weekBadge">Hafta</p>
+                  <h2 class="week-detail-title" id="weekTitle">Hafta detayı</h2>
+                  <p class="week-meta-text" id="weekMeta"></p>
+                </div>
+                <div class="week-nav-btns">
+                  <button class="btn btn-sm" id="prevWeek">← Önceki</button>
+                  <button class="btn btn-sm" id="nextWeek">Sonraki →</button>
+                </div>
+              </div>
+
+              <!-- Focus & Checkpoint -->
+              <div class="week-focus-bar">
+                <div class="focus-item">
+                  <span class="focus-label">🎯 Ana odak</span>
+                  <strong id="weekFocus">-</strong>
+                </div>
+                <div class="focus-item">
+                  <span class="focus-label">🏁 Hafta çıkışı</span>
+                  <p id="weekCheckpoint">-</p>
+                </div>
+              </div>
+
+              <div class="section-block">
+                <h3 class="block-title">🔎 Kaynak Merkezi</h3>
+                <p class="block-desc">Seçtiğin haftaya ve durumuna göre ücretsiz araştırma bağlantıları.</p>
+                <div id="weekResearchPanel" class="research-panel"></div>
+              </div>
+
+              <!-- Controls -->
+              <div class="week-controls-grid">
+                <label class="input-group">
+                  <span>Soru hedefi</span>
+                  <input id="questionGoal" type="number" min="0" step="10" />
+                </label>
+                <label class="input-group">
+                  <span>Çözülen soru</span>
+                  <input id="actualQuestions" type="number" min="0" step="1" />
+                </label>
+                <label class="input-group">
+                  <span>Durum</span>
+                  <select id="confidenceSelect">
+                    <option value="fragile">😟 Kırılgan</option>
+                    <option value="building">🔨 Gelişiyor</option>
+                    <option value="solid">💎 Sağlam</option>
+                  </select>
+                </label>
+                <label class="toggle-group">
+                  <input id="completeToggle" type="checkbox" />
+                  <span class="toggle-slider"></span>
+                  <span class="toggle-text">Haftayı tamamla</span>
+                </label>
+              </div>
+
+              <!-- Progress Bar -->
+              <div class="progress-section">
+                <div class="progress-header">
+                  <span>📊 Haftalık kapanış</span>
+                  <span id="weekProgressLabel">0/6</span>
+                </div>
+                <div class="progress-track">
+                  <div class="progress-bar-fill" id="weekProgressBar" style="width:0%"></div>
+                </div>
+              </div>
+
+              <!-- Checklist -->
+              <div class="section-block">
+                <h3 class="block-title">✅ Haftanın Temel Adımları</h3>
+                <p class="block-desc">Hafta bitmeden bunları kapat.</p>
+                <div class="checklist-grid" id="checklistGrid"></div>
+              </div>
+
+              <!-- Daily Plan -->
+              <div class="section-block">
+                <h3 class="block-title">📅 7 Günlük Plan</h3>
+                <p class="block-desc">Her günün çalışma bloklarını düzenle.</p>
+                <div class="daily-grid" id="dailyPlanGrid"></div>
+              </div>
+
+              <!-- Week Note -->
+              <div class="section-block">
+                <label class="input-group full-width">
+                  <span>📝 Hafta notu</span>
+                  <textarea id="weekNote" rows="4"
+                    placeholder="Bu hafta ne iyi gitti, ne yavaş kaldı, sonraki haftada neyi düzelteceksin?"></textarea>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SECTION: MASTERY ============ -->
+      <section class="content-page" id="page-mastery">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">🧠 Konu Hakimiyeti</h1>
+            <p class="page-subtitle" id="masterySummary">Konuları durumlarına göre işaretle.</p>
+          </div>
+        </div>
+        <div class="mastery-grid" id="masteryGrid"></div>
+      </section>
+
+      <!-- ============ SECTION: MISTAKES ============ -->
+      <section class="content-page" id="page-mistakes">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">🔬 Hata Laboratuvarı</h1>
+            <p class="page-subtitle" id="mistakeSummary">Hatalarını kaydet, analiz et, düzelt.</p>
+          </div>
+        </div>
+
+        <div class="card glass-card">
+          <div class="card-header">
+            <h2 class="card-title">➕ Yeni Hata Kaydı</h2>
+          </div>
+          <form id="mistakeForm" class="form-grid-4">
+            <label class="input-group">
+              <span>Tarih</span>
+              <input id="mistakeDate" type="date" />
+            </label>
+            <label class="input-group">
+              <span>Konu</span>
+              <input id="mistakeTopic" type="text" list="topicSuggestions" placeholder="Oran-orantı, çember..." />
+            </label>
+            <label class="input-group">
+              <span>Hata türü</span>
+              <select id="mistakeType">
+                <option value="Concept gap">🟡 Konu eksiği</option>
+                <option value="Careless">🔴 Dikkat hatası</option>
+                <option value="Speed">⏱️ Hız problemi</option>
+                <option value="Interpretation">📖 Soru yorumlama</option>
+                <option value="Memory">🧠 Bilgi hatırlama</option>
+                <option value="Geometry visualization">📐 Geometri görselleştirme</option>
+              </select>
+            </label>
+            <label class="input-group">
+              <span>Düzeltme planı</span>
+              <input id="mistakeFix" type="text" placeholder="20 kolay soru çöz..." />
+            </label>
+            <label class="input-group span-2">
+              <span>Ne oldu?</span>
+              <input id="mistakeNote" type="text" placeholder="Hatanın nasıl oluştuğunu kısaca yaz..." />
+            </label>
+            <button class="btn btn-glow span-2" type="submit">🔬 Hatayı Kaydet</button>
+          </form>
+          <div id="mistakeResearchPanel" class="inline-research-panel"></div>
+        </div>
+
+        <div class="mistake-stats" id="mistakeTypeStats"></div>
+
+        <div class="card glass-card">
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Tarih</th>
+                  <th>Konu</th>
+                  <th>Tür</th>
+                  <th>Düzeltme</th>
+                  <th>Not</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="mistakeTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SECTION: RECORDS ============ -->
+      <section class="content-page" id="page-records">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">📊 Kayıtlar</h1>
+            <p class="page-subtitle">Çalışma oturumların ve deneme sonuçların.</p>
+          </div>
+        </div>
+
+        <!-- Sessions -->
+        <div class="card glass-card">
+          <div class="card-header">
+            <h2 class="card-title">📚 Çalışma Oturumları</h2>
+            <span class="card-subtitle" id="sessionSummary"></span>
+          </div>
+          <form id="sessionForm" class="form-grid-4">
+            <label class="input-group">
+              <span>Tarih</span>
+              <input id="sessionDate" type="date" />
+            </label>
+            <label class="input-group">
+              <span>Konu</span>
+              <input id="sessionTopic" type="text" list="topicSuggestions" placeholder="Kesirler, üçgenler..." />
+            </label>
+            <label class="input-group">
+              <span>Süre (saat)</span>
+              <input id="sessionHours" type="number" min="0" step="0.25" />
+            </label>
+            <label class="input-group">
+              <span>Soru sayısı</span>
+              <input id="sessionQuestions" type="number" min="0" step="1" />
+            </label>
+            <label class="input-group span-2">
+              <span>Not</span>
+              <input id="sessionNote" type="text" placeholder="Nerede hızlandın, nerede takıldın?" />
+            </label>
+            <button class="btn btn-glow span-2" type="submit">📚 Oturumu Ekle</button>
+          </form>
+          <div id="sessionResearchPanel" class="inline-research-panel"></div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Tarih</th>
+                  <th>Konu</th>
+                  <th>Saat</th>
+                  <th>Soru</th>
+                  <th>Not</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="sessionTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Exams -->
+        <div class="card glass-card">
+          <div class="card-header">
+            <h2 class="card-title">🏆 Deneme Sonuçları</h2>
+            <span class="card-subtitle" id="examSummary"></span>
+          </div>
+          <form id="examForm" class="form-grid-4">
+            <label class="input-group">
+              <span>Tarih</span>
+              <input id="examLogDate" type="date" />
+            </label>
+            <label class="input-group">
+              <span>Tür</span>
+              <select id="examType">
+                <option value="TYT Math">TYT Matematik</option>
+                <option value="AYT Math">AYT Matematik</option>
+              </select>
+            </label>
+            <label class="input-group">
+              <span>Net / 40</span>
+              <input id="examScore" type="number" min="0" max="40" step="0.25" />
+            </label>
+            <label class="input-group">
+              <span>Süre (dk)</span>
+              <input id="examDuration" type="number" min="0" step="1" />
+            </label>
+            <label class="input-group span-2">
+              <span>Not</span>
+              <input id="examNote" type="text" placeholder="Sonucun neden çıktığını yaz..." />
+            </label>
+            <button class="btn btn-glow span-2" type="submit">🏆 Deneme Ekle</button>
+          </form>
+          <div class="chart-wrap">
+            <canvas id="examChart" height="260"></canvas>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Tarih</th>
+                  <th>Tür</th>
+                  <th>Net</th>
+                  <th>Süre</th>
+                  <th>Not</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="examTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SECTION: SETTINGS ============ -->
+      <section class="content-page" id="page-settings">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">⚙️ Ayarlar</h1>
+            <p class="page-subtitle">Profilini ve yedeklerini buradan yönet.</p>
+          </div>
+        </div>
+
+        <div class="settings-grid">
+          <div class="card glass-card">
+            <div class="card-header">
+              <h2 class="card-title">👤 Profil</h2>
+            </div>
+            <div class="settings-form">
+              <label class="input-group">
+                <span>Öğrenci adı</span>
+                <input id="profileName" type="text" placeholder="Adını yaz" />
+              </label>
+              <label class="input-group">
+                <span>Alan</span>
+                <select id="trackSelect">
+                  <option value="EA">EA</option>
+                  <option value="Sayisal">Sayısal</option>
+                  <option value="Sozel">Sözel</option>
+                </select>
+              </label>
+              <label class="input-group">
+                <span>Hedef sınav tarihi</span>
+                <input id="examDate" type="date" />
+              </label>
+              <p class="settings-note">Veriler cihazında saklanır. 2027 YKS tarihi resmi olarak açıklandığında güncelle.</p>
+            </div>
+          </div>
+
+          <div class="card glass-card">
+            <div class="card-header">
+              <h2 class="card-title">💾 Yedekleme</h2>
+            </div>
+            <div class="settings-actions">
+              <button id="exportData" class="btn btn-outline">📤 Yedeği Dışa Aktar</button>
+              <button id="importData" class="btn btn-outline">📥 Yedek İçe Aktar</button>
+              <input id="importFile" type="file" accept=".json" hidden />
+              <button id="resetTracker" class="btn btn-danger">🗑️ Tüm Paneli Sıfırla</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+  <datalist id="topicSuggestions"></datalist>
+  <script src="app.js"></script>
+</body>
+
+</html>
